@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block title %}EXport Data{% endblock title %}
+
+{% block content %}
+<div class="">
+    <div class="col-lg-12">
+        <h3 class="text-center">گزارش ثبت کاربران</h3>
+    </div>
+    <div class="col-lg-12 text-center">
+        <form id="myForm" action="{% url 'export_search_report' %}"  method="POST">
+            {% csrf_token %}
+            {% for item in form %}
+                {{ item.label_tag }}
+                <br>
+                {{ item }}
+                <br>
+                {{ item.errors.as_text }}
+            {% endfor %}
+
+            {% if error %}
+                <a href="{% url 'export_search_report' %}" class="btn btn-warning">refresh</a>
+                <p>{{ message }}</p>
+            {% else %}
+                <input type="submit" value="submit" class="btn btn-primary" id="submitBTN" >
+                <img id="imgShow" src="/static/images/Search.gif" style="display: none;" />
+                <p>{{ message }}</p>
+                {% if message == 'Ready csv file' %}
+                    <a href="{% url 'download_report_file' %}" class='btn btn-success'>Download File</a>
+                    <a href="{% url 'export_search_report' %}" class="btn btn-warning">refresh</a>
+                {% endif %}
+            {% endif %}
+            
+        </form>
+    </div>
+{% if form.errors %}
+    {{form.non_field_errors}}
+{% endif %}
+
+</div>
+
+<script>
+    $('#submitBTN').click(function(){
+        var valid = true;
+        var id_start_date = $('#id_start_date').val();
+        var id_end_date = $('#id_end_date').val();
+        if (id_start_date.length > 0 && id_end_date.length > 0) {
+            $(this).hide();
+            $('#imgShow').show()
+        }
+        
+    });
+</script>
+
+{% endblock content %}
