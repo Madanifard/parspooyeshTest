@@ -1,5 +1,5 @@
-import pymongo
 import pandas as pd
+from .connection import MongoConnection
 
 def fined_register_user(start_date, end_date):
     '''
@@ -8,22 +8,18 @@ def fined_register_user(start_date, end_date):
     search in people collection
     '''
     try:
-        database_name = 'parspooyeshDB'
-        collection_name = 'peoples'
-        my_client = pymongo.MongoClient("mongodb://localhost:27017")
-        my_db = my_client[database_name]
-        my_collections = my_db[collection_name]
-
+        connection = MongoConnection()
         conditions = {
             "signup": {
                 "$gt": start_date,
                 "$lt": end_date,
             }
         }
+        
         output = {
             'error': False,
             'message': 'search OK',
-            'data': my_collections.find(conditions)
+            'data': connection.find('peoples', conditions)
         }
     except Exception as ex:
         output = {
@@ -32,7 +28,9 @@ def fined_register_user(start_date, end_date):
         }
     finally:
         return output 
-    
+
+
+
 def report_register_people_pandas(items):
     '''
     get data that find 
